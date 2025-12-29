@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会话与计划 - LifeFlow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="header-left">
+                <img src="assets/logo.png" alt="LifeFlow" class="header-logo">
+                <h1>LifeFlow</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="chat.html" class="nav-link">💬 AI聊天</a>
+                <a href="main.html" class="nav-link active">会话与计划</a>
+                <a href="focus.html" class="nav-link">专注模式</a>
+                <a href="review.html" class="nav-link">复盘</a>
+            </nav>
+            <div class="header-right">
+                <span id="userInfo"></span>
+                <button id="logoutBtn" class="btn btn-text">退出</button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 左侧：会话控制 -->
+            <aside class="sidebar left-sidebar">
+                <div class="session-control">
+                    <h3>会话控制</h3>
+                    
+                    <div class="session-info">
+                        <div class="info-item">
+                            <label>当前会话 ID:</label>
+                            <span id="currentSessionId">未创建</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isPersistent" checked>
+                                <span>持久化保存</span>
+                            </label>
+                            <span id="persistentStatus" class="status-badge">数据库保存</span>
+                        </div>
+                    </div>
+                    
+                    <div class="session-actions">
+                        <button id="newSessionBtn" class="btn btn-primary">新建会话</button>
+                        <button id="clearSessionBtn" class="btn btn-danger">清空会话</button>
+                        <button id="exportSessionBtn" class="btn btn-secondary">导出会话</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中间：输入与提要 -->
+            <main class="center-content">
+                <div class="input-section">
+                    <h3>输入内容</h3>
+                    
+                    <!-- 文本输入 -->
+                    <div class="text-input-area">
+                        <textarea id="textInput" placeholder="粘贴长文本内容...支持同时上传文件" rows="8"></textarea>
+                    </div>
+                    
+                    <!-- 文件上传 -->
+                    <div class="file-upload-area">
+                        <div class="upload-trigger">
+                            <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" style="display: none;">
+                            <button id="uploadBtn" class="btn btn-secondary">
+                                <span>📎</span> 上传文件 (PDF/DOCX/TXT)
+                            </button>
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                    
+                    <button id="summarizeBtn" class="btn btn-primary btn-large">生成提要</button>
+                </div>
+
+                <!-- 提要结果 -->
+                <div id="summarySection" class="summary-section" style="display: none;">
+                    <h3>提要结果</h3>
+                    
+                    <div class="summary-info">
+                        <div class="info-badge">
+                            <span>处理耗时:</span>
+                            <strong id="processingTime">0</strong> ms
+                        </div>
+                    </div>
+                    
+                    <div class="main-theme">
+                        <h4>主旨</h4>
+                        <p id="mainTheme"></p>
+                    </div>
+                    
+                    <div class="key-points">
+                        <h4>关键要点</h4>
+                        <div id="keyPointsList"></div>
+                    </div>
+                    
+                    <button id="generateTasksBtn" class="btn btn-primary">生成任务</button>
+                </div>
+            </main>
+
+            <!-- 右侧：计划板 -->
+            <aside class="sidebar right-sidebar">
+                <div class="plan-board">
+                    <h3>计划板</h3>
+                    
+                    <!-- 今日三件事 -->
+                    <div class="today-top3">
+                        <h4>🎯 今日三件事</h4>
+                        <div id="todayTop3List" class="top3-list"></div>
+                    </div>
+                    
+                    <!-- 任务列表 -->
+                    <div class="task-section">
+                        <div class="task-header">
+                            <h4>任务列表</h4>
+                            <div class="completion-rate">
+                                完成度: <strong id="completionRate">0%</strong>
+                            </div>
+                        </div>
+                        <div id="taskList" class="task-list"></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>确认操作</h3>
+            <p id="confirmMessage"></p>
+            <div class="modal-actions">
+                <button id="confirmBtn" class="btn btn-danger">确认</button>
+                <button id="cancelBtn" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

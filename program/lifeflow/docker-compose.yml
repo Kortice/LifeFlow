@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: lifeflow-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: lifeflow_root_2024
+      MYSQL_DATABASE: lifeflow
+      MYSQL_USER: lifeflow_user
+      MYSQL_PASSWORD: lifeflow_pass_2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./lifeflowdbapi/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - lifeflow-network
+
+  backend:
+    build: ./lifeflowdbapi
+    container_name: lifeflow-backend
+    environment:
+      DB_HOST: mysql
+      DB_USER: lifeflow_user
+      DB_PASSWORD: lifeflow_pass_2024
+      DB_NAME: lifeflow
+      DB_PORT: 3306
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - lifeflow-network
+    volumes:
+      - ./lifeflowdbapi/uploads:/app/uploads
+
+  frontend:
+    image: nginx:alpine
+    container_name: lifeflow-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    networks:
+      - lifeflow-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  lifeflow-network:
+    driver: bridge

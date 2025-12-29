@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复盘 - LifeFlow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="header-left">
+                <img src="assets/logo.png" alt="LifeFlow" class="header-logo">
+                <h1>LifeFlow</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="chat.html" class="nav-link">💬 AI聊天</a>
+                <a href="main.html" class="nav-link">会话与计划</a>
+                <a href="focus.html" class="nav-link">专注模式</a>
+                <a href="review.html" class="nav-link active">复盘</a>
+            </nav>
+            <div class="header-right">
+                <span id="userInfo"></span>
+                <button id="logoutBtn" class="btn btn-text">退出</button>
+            </div>
+        </header>
+
+        <!-- 复盘内容 -->
+        <div class="review-container">
+            <h2>📊 会话复盘</h2>
+            
+            <!-- 会话选择 -->
+            <div class="session-selector">
+                <label for="sessionSelect">选择会话:</label>
+                <select id="sessionSelect">
+                    <option value="">-- 当前会话 --</option>
+                </select>
+                <button id="loadSessionBtn" class="btn btn-primary">加载</button>
+            </div>
+            
+            <!-- 统计概览 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>任务总数</h4>
+                    <div class="stat-value" id="totalTasks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>已完成</h4>
+                    <div class="stat-value" id="completedTasks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>完成率</h4>
+                    <div class="stat-value" id="completionRate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <h4>番茄次数</h4>
+                    <div class="stat-value" id="focusCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>总专注时长</h4>
+                    <div class="stat-value" id="totalFocusTime">0 分钟</div>
+                </div>
+            </div>
+            
+            <!-- 任务完成情况 -->
+            <div class="review-section">
+                <h3>任务完成情况</h3>
+                <div id="taskReviewList" class="task-review-list"></div>
+            </div>
+            
+            <!-- 专注记录 -->
+            <div class="review-section">
+                <h3>专注记录</h3>
+                <div id="focusHistoryList" class="focus-history-list"></div>
+            </div>
+            
+            <!-- 导出功能 -->
+            <div class="export-section">
+                <h3>导出复盘</h3>
+                <button id="exportReviewBtn" class="btn btn-primary">导出为文本</button>
+                <textarea id="exportContent" class="export-textarea" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/review.js"></script>
+</body>
+</html>

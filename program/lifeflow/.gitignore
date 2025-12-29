@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+**/node_modules/
+package-lock.json
+
+# Uploads & Logs
+uploads/
+**/uploads/
+logs/
+**/logs/
+*.log
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+**/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build & Distribution
+dist/
+build/
+*.egg-info/
+
+# Database
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary Files
+tmp/
+temp/
+**/tmp/
+**/temp/
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.venv/
+venv/
+**/venv/
+**/.venv/
+.cache/
+.pytest_cache/
+*.pyc
+
+# Git
+.git/
+**/.git/
+
+# PPT生成文档（内部使用）
+PPT_OUTLINE_FOR_TOME.md

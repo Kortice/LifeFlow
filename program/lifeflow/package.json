@@ -1,0 +1,28 @@
+{
+  "name": "lifeflow",
+  "version": "1.0.0",
+  "description": "对话式多智能体工作管家 - 完整全栈应用",
+  "scripts": {
+    "install-all": "cd lifeflowdbapi && npm install",
+    "init-db": "cd lifeflowdbapi && npm run init-db",
+    "extend-db": "cd lifeflowdbapi && npm run extend-db",
+    "start-backend": "cd lifeflowdbapi && npm start",
+    "start-frontend": "cd frontend && python -m http.server 3000",
+    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "docker-up": "docker-compose up -d",
+    "docker-down": "docker-compose down",
+    "docker-logs": "docker-compose logs -f"
+  },
+  "keywords": [
+    "lifeflow",
+    "task-management",
+    "pomodoro",
+    "nlp",
+    "productivity"
+  ],
+  "author": "LifeFlow Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

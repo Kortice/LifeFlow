@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeFlow AI - 智能助手</title>
+    <link rel="stylesheet" href="css/chat-style.css?v=20251128-2530">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-header">
+                    <img src="assets/logo.png" alt="LifeFlow" class="sidebar-logo">
+                    <h2>LifeFlow AI</h2>
+                </div>
+            </div>
+            
+            <!-- 快捷功能按钮（可复选） -->
+            <div class="quick-actions">
+                <h3>✨ AI 功能</h3>
+                <label class="action-item">
+                    <input type="checkbox" name="feature" value="chat" checked>
+                    <span class="action-icon">💬</span>
+                    <span class="action-text">智能对话</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox" name="feature" value="summary">
+                    <span class="action-icon">📝</span>
+                    <span class="action-text">内容摘要</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox" name="feature" value="plan">
+                    <span class="action-icon">📋</span>
+                    <span class="action-text">计划建议</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox" name="feature" value="task">
+                    <span class="action-icon">✅</span>
+                    <span class="action-text">任务生成</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox" name="feature" value="knowledge">
+                    <span class="action-icon">📚</span>
+                    <span class="action-text">知识问答</span>
+                </label>
+            </div>
+            
+            <!-- 历史会话 -->
+            <div class="chat-history">
+                <h3>💬 会话管理</h3>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <span>+</span> 新对话
+                </button>
+                <div class="history-list" id="historyList">
+                    <!-- 动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 用户信息 -->
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-details">
+                    <div class="username" id="sidebarUsername">用户</div>
+                    <button class="logout-btn" id="logoutBtn">退出登录</button>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 主聊天区域 -->
+        <main class="chat-main">
+            <!-- 顶部栏 -->
+            <header class="chat-header">
+                <div class="session-info">
+                    <span class="session-status" id="sessionStatus">💬 自由对话</span>
+                    <span class="session-id" id="sessionId"></span>
+                </div>
+            </header>
+            
+            <!-- 主内容区域 -->
+            <div class="main-content">
+                <!-- 对话面板 -->
+                <div class="tab-panel active" id="chatPanel">
+                    <div class="messages-container" id="messagesContainer">
+                        <div class="welcome-screen">
+                            <img src="assets/logo.png" alt="LifeFlow" class="welcome-logo">
+                            <h1>欢迎使用 LifeFlow AI</h1>
+                            <p>我是你的智能助手，可以帮你：</p>
+                            <div class="feature-cards">
+                                <div class="feature-card" onclick="quickAction('chat')">
+                                    <span class="feature-icon">💬</span>
+                                    <h3>日常对话</h3>
+                                    <p>随时聊天，答疑解惑</p>
+                                </div>
+                                <div class="feature-card" onclick="quickAction('summary')">
+                                    <span class="feature-icon">📄</span>
+                                    <h3>文档分析</h3>
+                                    <p>上传文件，提取要点</p>
+                                </div>
+                                <div class="feature-card" onclick="quickAction('plan')">
+                                    <span class="feature-icon">📋</span>
+                                    <h3>计划建议</h3>
+                                    <p>分析问题，给出方案</p>
+                                </div>
+                                <div class="feature-card" onclick="quickAction('task')">
+                                    <span class="feature-icon">✅</span>
+                                    <h3>任务生成</h3>
+                                    <p>生成可执行的待办</p>
+                                </div>
+                            </div>
+                            <p class="welcome-hint">💡 左侧可多选功能组合 · 直接输入或上传文档开始</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 输入区域 -->
+            <div class="input-container" id="inputContainer">
+                <div class="file-preview" id="filePreview"></div>
+                <div class="input-wrapper">
+                    <button class="attach-btn" id="attachBtn" type="button" title="上传文件">
+                        <span>📎</span>
+                    </button>
+                    <input type="file" id="fileInput" multiple style="display: none;" accept=".txt,.pdf,.docx,.doc">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="随便聊聊，或者上传文档让我帮你分析..." 
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" type="button" title="发送">
+                        <span>➤</span>
+                    </button>
+                </div>
+                <div class="input-hint">
+                    Enter 发送 · Shift+Enter 换行 · 支持 PDF/Word/TXT 文件
+                </div>
+            </div>
+        </main>
+        
+        <!-- 右侧面板 -->
+        <aside class="right-panel" id="rightPanel">
+            <div class="right-panel-header">
+                <div class="right-panel-tabs">
+                    <button class="action-btn active" id="taskTabBtn" data-tab="tasks">📋 任务</button>
+                    <button class="action-btn" id="filesTabBtn" data-tab="files">📁 文件</button>
+                    <button class="action-btn" id="focusTabBtn" data-tab="focus">⏱️ 专注</button>
+                    <button class="action-btn" id="reviewTabBtn" data-tab="review">📊 回顾</button>
+                </div>
+            </div>
+            <div class="right-panel-content">
+                <!-- 任务面板 -->
+                <div class="tab-panel active" id="tasksPanel">
+                    <div class="panel-header">
+                        <h2>📋 任务清单</h2>
+                        <div class="panel-actions">
+                            <button class="small-btn" onclick="refreshTaskList()">🔄 刷新</button>
+                            <button class="small-btn" onclick="showAddTaskModal()">➕ 添加</button>
+                            <button class="small-btn" onclick="clearCompletedTasks()">🗑️ 清除已完成</button>
+                        </div>
+                    </div>
+                    <div class="task-filters">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="active">待办</button>
+                        <button class="filter-btn" data-filter="completed">已完成</button>
+                    </div>
+                    <div class="task-list" id="taskList">
+                        <div class="empty-state">
+                            <span>📝</span>
+                            <p>暂无任务</p>
+                            <small>上传文档或对话生成任务</small>
+                        </div>
+                    </div>
+                    <div class="task-stats" id="taskStats">
+                        <span>总计: <strong>0</strong></span>
+                        <span>待办: <strong>0</strong></span>
+                        <span>已完成: <strong>0</strong></span>
+                    </div>
+                </div>
+                
+                <!-- 专注面板 -->
+                <div class="tab-panel" id="focusPanel">
+                    <div class="focus-container">
+                        <!-- 专注状态指示器 -->
+                        <div class="focus-status-bar" id="focusStatusBar">
+                            <div class="focus-indicator" id="focusIndicator">
+                                <span class="indicator-dot"></span>
+                                <span class="indicator-text">等待开始</span>
+                            </div>
+                            <div class="focus-progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                                <span class="progress-percent" id="progressPercent">0%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 专注质量显示 -->
+                        <div class="focus-quality" id="focusQuality"></div>
+                        
+                        <!-- 当前任务显示 -->
+                        <div class="current-task-card" id="currentTaskCard" style="display: none;">
+                            <div class="task-card-header">
+                                <span>📋 当前专注任务</span>
+                                <span class="task-priority" id="currentTaskPriority">普通</span>
+                            </div>
+                            <div class="task-card-title" id="currentTaskTitle">-</div>
+                            <div class="task-card-dod" id="currentTaskDOD"></div>
+                        </div>
+                        
+                        <!-- 番茄钟主体 -->
+                        <div class="pomodoro-clock">
+                            <div class="clock-ring">
+                                <svg class="progress-ring" width="280" height="280">
+                                    <circle class="progress-ring-bg" cx="140" cy="140" r="130" />
+                                    <circle class="progress-ring-circle" id="progressCircle" cx="140" cy="140" r="130" />
+                                </svg>
+                                <div class="clock-inner">
+                                    <div class="timer-display" id="timerDisplay">25:00</div>
+                                    <div class="timer-label" id="timerLabel">准备开始</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 控制按钮 -->
+                        <div class="focus-controls">
+                            <button class="focus-btn primary" id="startFocusBtn" onclick="startFocus()">
+                                <span class="btn-icon">▶</span>
+                                <span>开始专注</span>
+                            </button>
+                            <button class="focus-btn warning" id="pauseFocusBtn" onclick="pauseFocus()" style="display: none;">
+                                <span class="btn-icon">⏸</span>
+                                <span>暂停</span>
+                            </button>
+                            <button class="focus-btn secondary" id="resetFocusBtn" onclick="resetFocus()">
+                                <span class="btn-icon">↻</span>
+                                <span>重置</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 设置区域 -->
+                        <div class="focus-settings-card">
+                            <div class="settings-row">
+                                <label>
+                                    <span class="setting-label">🍅 专注时长</span>
+                                    <select id="focusDuration" onchange="updateTimerFromSettings()">
+                                        <option value="2">2 分钟 (测试)</option>
+                                        <option value="5">5 分钟 (测试)</option>
+                                        <option value="15">15 分钟</option>
+                                        <option value="25" selected>25 分钟</option>
+                                        <option value="45">45 分钟</option>
+                                        <option value="60">60 分钟</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span class="setting-label">☕ 休息时长</span>
+                                    <select id="breakDuration">
+                                        <option value="1">1 分钟 (测试)</option>
+                                        <option value="5" selected>5 分钟</option>
+                                        <option value="10">10 分钟</option>
+                                        <option value="15">15 分钟</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <label class="full-width">
+                                    <span class="setting-label">📋 关联任务</span>
+                                    <select id="focusTaskSelect">
+                                        <option value="">-- 选择任务（可选）--</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <!-- ESP32 LED 控制 -->
+                            <div class="settings-row esp32-row">
+                                <label class="full-width">
+                                    <span class="setting-label">💡 ESP32 LED</span>
+                                    <div class="esp32-controls">
+                                        <input type="text" id="esp32IP" placeholder="ESP32 IP 地址" value="192.168.4.1">
+                                        <button class="small-btn" onclick="testESP32Connection()">测试连接</button>
+                                    </div>
+                                </label>
+                                <div class="esp32-status" id="esp32Status">未连接</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 统计信息 -->
+                        <div class="focus-stats-card">
+                            <div class="stat-item">
+                                <span class="stat-emoji">🍅</span>
+                                <span class="stat-value" id="focusSessions">0</span>
+                                <span class="stat-label">今日番茄</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-emoji">⏱️</span>
+                                <span class="stat-value" id="focusTotalTime">0</span>
+                                <span class="stat-label">专注分钟</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-emoji">🔥</span>
+                                <span class="stat-value" id="focusStreak">0</span>
+                                <span class="stat-label">连续天数</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 回顾面板 -->
+                <div class="tab-panel" id="reviewPanel">
+                    <div class="panel-header">
+                        <h2>📊 工作回顾</h2>
+                        <div class="panel-actions">
+                            <button class="small-btn" onclick="generateAISummary()">🤖 AI生成总结</button>
+                            <button class="small-btn" onclick="exportReview()">📥 导出报告</button>
+                        </div>
+                    </div>
+                    <div class="review-content" id="reviewContent">
+                        <div class="review-section">
+                            <h3>📅 今日概览</h3>
+                            <div class="review-stats" id="reviewStatsGrid">
+                                <div class="review-stat">
+                                    <span class="stat-icon">💬</span>
+                                    <span class="stat-value" id="totalMessages">0</span>
+                                    <span class="stat-label">对话消息</span>
+                                </div>
+                                <div class="review-stat">
+                                    <span class="stat-icon">📄</span>
+                                    <span class="stat-value" id="totalDocs">0</span>
+                                    <span class="stat-label">分析文档</span>
+                                </div>
+                                <div class="review-stat">
+                                    <span class="stat-icon">✅</span>
+                                    <span class="stat-value" id="totalTasks">0</span>
+                                    <span class="stat-label">完成任务</span>
+                                </div>
+                                <div class="review-stat">
+                                    <span class="stat-icon">⏱️</span>
+                                    <span class="stat-value" id="totalFocus">0</span>
+                                    <span class="stat-label">专注分钟</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-section">
+                            <h3>📝 AI 总结</h3>
+                            <div class="ai-summary" id="aiSummaryContent">
+                                <p class="placeholder">点击「AI生成总结」获取今日工作回顾</p>
+                            </div>
+                        </div>
+                        <div class="review-section">
+                            <h3>🎯 关键要点</h3>
+                            <div class="key-points-list" id="keyPointsList">
+                                <p class="placeholder">暂无要点记录</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 文件面板 -->
+                <div class="tab-panel" id="filesPanel">
+                    <div class="panel-header">
+                        <h2>📁 文件历史</h2>
+                        <div class="panel-actions">
+                            <button class="small-btn" onclick="refreshFileList()">🔄 刷新</button>
+                            <button class="small-btn" onclick="clearFileHistory()">🗑️ 清空历史</button>
+                        </div>
+                    </div>
+                    <div class="file-history-list" id="fileHistoryList">
+                        <div class="empty-state">
+                            <span>📂</span>
+                            <p>暂无上传记录</p>
+                            <small>上传文档后会显示在这里</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- 添加任务弹窗 -->
+    <div class="modal" id="addTaskModal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ 添加任务</h3>
+                <button class="close-btn" onclick="closeModal('addTaskModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>任务标题</label>
+                    <input type="text" id="newTaskTitle" placeholder="输入任务标题...">
+                </div>
+                <div class="form-group">
+                    <label>优先级</label>
+                    <select id="newTaskPriority">
+                        <option value="low">低</option>
+                        <option value="normal" selected>普通</option>
+                        <option value="high">高</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>预计时间（分钟）</label>
+                    <input type="number" id="newTaskDuration" value="30" min="5" max="480">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('addTaskModal')">取消</button>
+                <button class="btn primary" onclick="saveNewTask()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/chat-new.js?v=20251129-0001"></script>
+</body>
+</html>

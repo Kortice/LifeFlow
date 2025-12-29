@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - LifeFlow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <img src="assets/logo.png" alt="LifeFlow" class="auth-logo">
+            <h1>LifeFlow</h1>
+            <p class="subtitle">智能工作与生活助手</p>
+            
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">登录</button>
+                
+                <p class="auth-switch">
+                    还没有账号？<a href="register.html">立即注册</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/auth.js?v=20251128-2215"></script>
+</body>
+</html>
